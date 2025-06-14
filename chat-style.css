@@ -46,6 +46,7 @@ body {
     padding: 20px;
     background: #f8fafc;
     scroll-behavior: smooth;
+    min-height: 0;
 }
 
 .message {
@@ -224,49 +225,89 @@ body {
 
 /* スマホ最適化 */
 @media (max-width: 768px) {
+    body {
+        height: 100vh;
+        height: -webkit-fill-available;
+    }
+    
     .chat-container {
         max-width: 100%;
         height: 100vh;
+        height: -webkit-fill-available;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
     }
     
     .chat-header {
-        padding: 12px 15px;
+        padding: 10px 15px;
+        flex-shrink: 0;
     }
     
     .chat-header h1 {
-        font-size: 1.3rem;
-        margin-bottom: 3px;
+        font-size: 1.2rem;
+        margin-bottom: 2px;
+    }
+    
+    .chat-header p {
+        font-size: 0.8rem;
     }
     
     .chat-messages {
         padding: 10px 15px;
+        flex: 1;
+        min-height: 0;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
     }
     
     .message {
-        margin-bottom: 12px;
+        margin-bottom: 10px;
     }
     
     .message-bubble {
         max-width: 85%;
-        font-size: 0.95rem;
-        padding: 10px 14px;
+        font-size: 0.9rem;
+        padding: 8px 12px;
     }
     
     .chat-input-container {
-        padding: 8px 15px 12px 15px;
+        padding: 8px 15px;
+        flex-shrink: 0;
+        background: white;
+        border-top: 1px solid #e2e8f0;
+    }
+    
+    .chat-input-wrapper {
+        padding: 6px;
+    }
+    
+    #chat-input {
+        font-size: 16px;
+        padding: 8px 12px;
+        -webkit-appearance: none;
+        appearance: none;
+        border-radius: 20px;
+    }
+    
+    #send-button {
+        width: 36px;
+        height: 36px;
     }
     
     .drug-item {
-        padding: 12px;
-        margin-bottom: 8px;
+        padding: 10px;
+        margin-bottom: 6px;
     }
     
     .drug-name {
-        font-size: 0.95rem;
+        font-size: 0.9rem;
     }
     
     .drug-generic {
-        font-size: 0.85rem;
+        font-size: 0.8rem;
     }
 }
 
