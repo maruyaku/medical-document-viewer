@@ -125,6 +125,10 @@ function searchAndReply(searchTerm) {
             ...drug.searchKeywords.map(keyword => keyword.toLowerCase())
         ];
         
+        // 薬品名から数値を自動抽出して検索対象に追加
+        const extractedNumbers = drug.name.match(/\d+/g) || [];
+        searchableText.push(...extractedNumbers);
+        
         // すべての検索語が含まれているかチェック（AND検索）
         return searchWords.every(searchWord => 
             searchableText.some(text => text.includes(searchWord))
