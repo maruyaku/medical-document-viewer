@@ -114,14 +114,25 @@ function addBotMessage(content) {
 }
 
 function searchAndReply(searchTerm) {
-    const results = drugDatabase.filter(drug => 
-        drug.searchKeywords.some(keyword => 
-            keyword.toLowerCase().includes(searchTerm.toLowerCase())
-        )
-    );
+    // 検索語をスペースで分割して複数キーワードに対応
+    const searchWords = searchTerm.trim().split(/\s+/).map(word => word.toLowerCase());
+    
+    const results = drugDatabase.filter(drug => {
+        // 薬品名と一般名も検索対象に含める
+        const searchableText = [
+            drug.name.toLowerCase(),
+            drug.genericName.toLowerCase(),
+            ...drug.searchKeywords.map(keyword => keyword.toLowerCase())
+        ];
+        
+        // すべての検索語が含まれているかチェック（AND検索）
+        return searchWords.every(searchWord => 
+            searchableText.some(text => text.includes(searchWord))
+        );
+    });
     
     if (results.length === 0) {
-        addBotMessage(`「${escapeHtml(searchTerm)}」に関連する医薬品が見つかりませんでした。<br><br>別のキーワードで検索してみてください。<br>例：「ロキソニン」「カロナール」「ムコダイン」`);
+        addBotMessage(`「${escapeHtml(searchTerm)}」に関連する医薬品が見つかりませんでした。<br><br>別のキーワードで検索してみてください。<br>例：「ロキソニン」「カロナール 錠」「ムコダイン 500」`);
         return;
     }
     
