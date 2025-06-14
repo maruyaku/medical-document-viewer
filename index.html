@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>医療用医薬品添付文書 閲覧サイト</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>医療用医薬品添付文書 閲覧サイト</h1>
+            <p>PMDAの添付文書を簡単に閲覧できます</p>
+        </header>
+
+        <main>
+            <div class="search-input-section" id="search-input-section">
+                <div class="search-container">
+                    <h2>薬品名を入力してください</h2>
+                    <div class="search-box">
+                        <input type="text" id="search-input" placeholder="例：カロナール、ロキソニン" />
+                        <button id="search-btn" onclick="performSearch()">検索</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="search-results-section" id="search-results-section" style="display: none;">
+                <div class="search-header">
+                    <button class="back-btn" onclick="goBack()">← 検索に戻る</button>
+                    <h2 id="search-results-title">検索結果</h2>
+                </div>
+                <div id="search-results">
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
