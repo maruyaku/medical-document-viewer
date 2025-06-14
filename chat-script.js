@@ -2,7 +2,7 @@ const drugDatabase = [
     {
         name: "カロナール錠200mg・300mg・500mg",
         genericName: "アセトアミノフェン",
-        searchKeywords: ["カロナール", "カロナール錠", "アセトアミノフェン"],
+        searchKeywords: ["カロナール", "カロナール錠", "アセトアミノフェン", "200", "300", "500", "200mg", "300mg", "500mg"],
         url: "https://www.pmda.go.jp/PmdaSearch/iyakuDetail/ResultDataSetPDF/172190_1141007F1063_5_06"
     },
     {
@@ -14,7 +14,7 @@ const drugDatabase = [
     {
         name: "ロキソニン錠60mg・細粒10%",
         genericName: "ロキソプロフェンナトリウム水和物",
-        searchKeywords: ["ロキソニン", "ロキソニン錠", "ロキソニン細粒", "ロキソプロフェン"],
+        searchKeywords: ["ロキソニン", "ロキソニン錠", "ロキソニン細粒", "ロキソプロフェン", "60", "10", "60mg", "10%"],
         url: "https://www.pmda.go.jp/PmdaSearch/iyakuDetail/ResultDataSetPDF/430574_1149019C1149_1_13"
     },
     {
@@ -44,13 +44,13 @@ const drugDatabase = [
     {
         name: "セレコックス錠100mg・200mg",
         genericName: "セレコキシブ",
-        searchKeywords: ["セレコックス", "セレコックス錠", "セレコキシブ"],
+        searchKeywords: ["セレコックス", "セレコックス錠", "セレコキシブ", "100", "200", "100mg", "200mg"],
         url: "https://www.pmda.go.jp/PmdaSearch/iyakuDetail/ResultDataSetPDF/671450_1149037F1020_2_04"
     },
     {
         name: "ムコダイン錠250mg・500mg",
         genericName: "L-カルボシステイン",
-        searchKeywords: ["ムコダイン", "ムコダイン錠", "カルボシステイン"],
+        searchKeywords: ["ムコダイン", "ムコダイン錠", "カルボシステイン", "250", "500", "250mg", "500mg"],
         url: "https://www.pmda.go.jp/PmdaSearch/iyakuDetail/ResultDataSetPDF/231099_2233002F1174_2_02"
     },
     {
