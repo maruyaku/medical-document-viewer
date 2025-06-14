@@ -230,28 +230,35 @@ body {
     }
     
     .chat-header {
-        padding: 15px;
+        padding: 12px 15px;
     }
     
     .chat-header h1 {
         font-size: 1.3rem;
+        margin-bottom: 3px;
     }
     
     .chat-messages {
-        padding: 15px;
+        padding: 10px 15px;
+    }
+    
+    .message {
+        margin-bottom: 12px;
     }
     
     .message-bubble {
         max-width: 85%;
         font-size: 0.95rem;
+        padding: 10px 14px;
     }
     
     .chat-input-container {
-        padding: 12px 15px 15px 15px;
+        padding: 8px 15px 12px 15px;
     }
     
     .drug-item {
         padding: 12px;
+        margin-bottom: 8px;
     }
     
     .drug-name {
