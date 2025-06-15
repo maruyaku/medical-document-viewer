@@ -332,3 +332,36 @@ body {
         appearance: none;
     }
 }
+
+/* 併用禁忌リスト */
+.contraindication-list {
+    background: #fef3cd;
+    border: 1px solid #ffc107;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 10px 0;
+}
+
+.contraindication-item {
+    padding: 4px 0;
+    border-bottom: 1px solid #f0c14b;
+    font-size: 0.9rem;
+    color: #856404;
+}
+
+.contraindication-item:last-child {
+    border-bottom: none;
+}
+
+/* スマホでの併用禁忌リスト */
+@media (max-width: 768px) {
+    .contraindication-list {
+        padding: 12px;
+        margin: 8px 0;
+    }
+    
+    .contraindication-item {
+        font-size: 0.8rem;
+        padding: 3px 0;
+    }
+}

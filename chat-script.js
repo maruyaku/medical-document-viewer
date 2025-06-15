@@ -69,12 +69,44 @@ const drugDatabase = [
         name: "クラリス錠200",
         genericName: "クラリスロマイシン",
         searchKeywords: ["クラリス", "クラリス錠", "クラリスロマイシン", "抗生物質", "マクロライド"],
+        contraindications: [
+            "ピモジド（オーラップ）",
+            "エルゴタミン酒石酸塩・無水カフェイン・イソプロピルアンチピリン（クリアミン）",
+            "ジヒドロエルゴタミンメシル酸塩",
+            "スボレキサント（ベルソムラ）",
+            "ロミタピドメシル酸塩（ジャクスタピッド）",
+            "タダラフィル（アドシルカ）",
+            "チカグレロル（ブリリンタ）",
+            "イブルチニブ（イムブルビカ）",
+            "イバブラジン塩酸塩（コララン）",
+            "ベネトクラクス（ベネクレクスタ）",
+            "ルラシドン塩酸塩（ラツーダ）",
+            "アナモレリン塩酸塩（エドルミズ）",
+            "フィネレノン（ケレンディア）",
+            "イサブコナゾニウム硫酸塩（クレセンバ）"
+        ],
         url: "https://www.pmda.go.jp/PmdaSearch/iyakuDetail/ResultDataSetPDF/400059_6149003F2038_1_36"
     },
     {
         name: "クラリス錠50小児用・クラリスドライシロップ10％小児用",
         genericName: "クラリスロマイシン",
         searchKeywords: ["クラリス", "クラリス錠", "クラリスドライシロップ", "クラリスDS", "クラリスロマイシン", "小児用", "抗生物質", "マクロライド", "ドライシロップ"],
+        contraindications: [
+            "ピモジド（オーラップ）",
+            "エルゴタミン酒石酸塩・無水カフェイン・イソプロピルアンチピリン（クリアミン）",
+            "ジヒドロエルゴタミンメシル酸塩",
+            "スボレキサント（ベルソムラ）",
+            "ロミタピドメシル酸塩（ジャクスタピッド）",
+            "タダラフィル（アドシルカ）",
+            "チカグレロル（ブリリンタ）",
+            "イブルチニブ（イムブルビカ）",
+            "イバブラジン塩酸塩（コララン）",
+            "ベネトクラクス（ベネクレクスタ）",
+            "ルラシドン塩酸塩（ラツーダ）",
+            "アナモレリン塩酸塩（エドルミズ）",
+            "フィネレノン（ケレンディア）",
+            "イサブコナゾニウム硫酸塩（クレセンバ）"
+        ],
         url: "https://www.pmda.go.jp/PmdaSearch/iyakuDetail/ResultDataSetPDF/400059_6149003F1031_1_37"
     }
 ];
@@ -129,6 +161,12 @@ function searchAndReply(searchTerm) {
     // 検索語をスペースで分割して複数キーワードに対応
     const searchWords = searchTerm.trim().split(/\s+/).map(word => word.toLowerCase());
     
+    // 禁忌検索かどうかをチェック
+    if (searchWords.includes('禁忌')) {
+        handleContraindicationSearch(searchTerm, searchWords);
+        return;
+    }
+    
     const results = drugDatabase.filter(drug => {
         // 薬品名と一般名も検索対象に含める
         const searchableText = [
@@ -148,7 +186,7 @@ function searchAndReply(searchTerm) {
     });
     
     if (results.length === 0) {
-        addBotMessage(`「${escapeHtml(searchTerm)}」に関連する医薬品が見つかりませんでした。<br><br>別のキーワードで検索してみてください。<br>例：「ロキソニン」「カロナール 錠」「ムコダイン 500」`);
+        addBotMessage(`「${escapeHtml(searchTerm)}」に関連する医薬品が見つかりませんでした。<br><br>別のキーワードで検索してみてください。<br>例：「ロキソニン」「カロナール 錠」「ムコダイン 500」<br>併用禁忌を調べる場合：「クラリス 禁忌」`);
         return;
     }
     
@@ -164,6 +202,46 @@ function searchAndReply(searchTerm) {
         `;
     });
     responseContent += '</div>';
+    
+    addBotMessage(responseContent);
+}
+
+function handleContraindicationSearch(searchTerm, searchWords) {
+    // 「禁忌」を除いたキーワードで薬品を検索
+    const drugKeywords = searchWords.filter(word => word !== '禁忌');
+    
+    const matchedDrugs = drugDatabase.filter(drug => {
+        const searchableText = [
+            drug.name.toLowerCase(),
+            drug.genericName.toLowerCase(),
+            ...drug.searchKeywords.map(keyword => keyword.toLowerCase())
+        ];
+        
+        return drugKeywords.every(keyword => 
+            searchableText.some(text => text.includes(keyword))
+        );
+    });
+    
+    if (matchedDrugs.length === 0) {
+        addBotMessage(`「${escapeHtml(searchTerm)}」に該当する薬品が見つかりませんでした。<br><br>薬品名を確認してください。<br>例：「クラリス 禁忌」`);
+        return;
+    }
+    
+    // 複数の薬品がマッチした場合は最初の薬品を使用
+    const targetDrug = matchedDrugs[0];
+    
+    if (!targetDrug.contraindications || targetDrug.contraindications.length === 0) {
+        addBotMessage(`「${escapeHtml(targetDrug.name)}」の併用禁忌薬の情報は登録されていません。`);
+        return;
+    }
+    
+    let responseContent = `「${escapeHtml(targetDrug.name)}」の併用禁忌薬：<br><br>`;
+    responseContent += '<div class="contraindication-list">';
+    targetDrug.contraindications.forEach(drug => {
+        responseContent += `<div class="contraindication-item">• ${escapeHtml(drug)}</div>`;
+    });
+    responseContent += '</div>';
+    responseContent += '<br><small>※詳細は添付文書をご確認ください。</small>';
     
     addBotMessage(responseContent);
 }
