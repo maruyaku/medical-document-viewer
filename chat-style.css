@@ -353,6 +353,18 @@ body {
     border-bottom: none;
 }
 
+.document-link {
+    color: #667eea;
+    text-decoration: underline;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.document-link:hover {
+    color: #5a67d8;
+    text-decoration: none;
+}
+
 /* スマホでの併用禁忌リスト */
 @media (max-width: 768px) {
     .contraindication-list {

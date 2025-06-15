@@ -241,7 +241,7 @@ function handleContraindicationSearch(searchTerm, searchWords) {
         responseContent += `<div class="contraindication-item">• ${escapeHtml(drug)}</div>`;
     });
     responseContent += '</div>';
-    responseContent += '<br><small>※詳細は添付文書をご確認ください。</small>';
+    responseContent += `<br><small>※詳細は<a href="#" onclick="openDocument('${targetDrug.url}')" class="document-link">添付文書</a>をご確認ください。</small>`;
     
     addBotMessage(responseContent);
 }
