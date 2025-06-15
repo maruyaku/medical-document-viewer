@@ -66,15 +66,15 @@ const drugDatabase = [
         url: "https://www.pmda.go.jp/PmdaSearch/iyakuDetail/ResultDataSetPDF/231099_2233002R2029_2_02"
     },
     {
-        name: "クラリス錠50小児用・クラリスドライシロップ10％小児用",
-        genericName: "クラリスロマイシン",
-        searchKeywords: ["クラリス", "クラリス錠", "クラリスドライシロップ", "クラリスDS", "クラリスロマイシン", "小児用", "抗生物質", "マクロライド", "ドライシロップ"],
-        url: "https://www.pmda.go.jp/PmdaSearch/iyakuDetail/ResultDataSetPDF/400059_6149003F2038_1_36"
-    },
-    {
         name: "クラリス錠200",
         genericName: "クラリスロマイシン",
         searchKeywords: ["クラリス", "クラリス錠", "クラリスロマイシン", "抗生物質", "マクロライド"],
+        url: "https://www.pmda.go.jp/PmdaSearch/iyakuDetail/ResultDataSetPDF/400059_6149003F2038_1_36"
+    },
+    {
+        name: "クラリス錠50小児用・クラリスドライシロップ10％小児用",
+        genericName: "クラリスロマイシン",
+        searchKeywords: ["クラリス", "クラリス錠", "クラリスドライシロップ", "クラリスDS", "クラリスロマイシン", "小児用", "抗生物質", "マクロライド", "ドライシロップ"],
         url: "https://www.pmda.go.jp/PmdaSearch/iyakuDetail/ResultDataSetPDF/400059_6149003F1031_1_37"
     }
 ];
