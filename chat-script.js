@@ -248,10 +248,6 @@ function handleContraindicationSearch(searchTerm, searchWords) {
 
 function openDocument(url) {
     window.open(url, '_blank', 'noopener,noreferrer');
-    
-    setTimeout(() => {
-        addBotMessage('添付文書を開きました。他にも薬品を検索しますか？');
-    }, 1000);
 }
 
 function escapeHtml(text) {
