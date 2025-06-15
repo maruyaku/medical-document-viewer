@@ -129,3 +129,77 @@ document.getElementById('search-input').addEventListener('keypress', function(e)
         performSearch();
     }
 });
+
+let recognition = null;
+let isListening = false;
+
+function initSpeechRecognition() {
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognition = new SpeechRecognition();
+        
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        recognition.lang = 'ja-JP';
+        
+        recognition.onstart = function() {
+            isListening = true;
+            updateVoiceButton();
+        };
+        
+        recognition.onresult = function(event) {
+            const transcript = event.results[0][0].transcript;
+            document.getElementById('search-input').value = transcript;
+        };
+        
+        recognition.onend = function() {
+            isListening = false;
+            updateVoiceButton();
+        };
+        
+        recognition.onerror = function(event) {
+            console.error('音声認識エラー:', event.error);
+            isListening = false;
+            updateVoiceButton();
+            
+            if (event.error === 'not-allowed') {
+                alert('マイクへのアクセスが許可されていません。ブラウザの設定を確認してください。');
+            } else if (event.error === 'no-speech') {
+                alert('音声が検出されませんでした。もう一度お試しください。');
+            } else {
+                alert('音声認識でエラーが発生しました: ' + event.error);
+            }
+        };
+    } else {
+        console.error('このブラウザは音声認識をサポートしていません');
+        document.getElementById('voice-btn').style.display = 'none';
+    }
+}
+
+function toggleVoiceInput() {
+    if (!recognition) {
+        alert('このブラウザは音声認識をサポートしていません');
+        return;
+    }
+    
+    if (isListening) {
+        recognition.stop();
+    } else {
+        recognition.start();
+    }
+}
+
+function updateVoiceButton() {
+    const voiceBtn = document.getElementById('voice-btn');
+    if (isListening) {
+        voiceBtn.textContent = '🛑';
+        voiceBtn.style.background = '#ff4444';
+    } else {
+        voiceBtn.textContent = '🎤';
+        voiceBtn.style.background = '';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    initSpeechRecognition();
+});
