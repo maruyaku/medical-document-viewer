@@ -308,7 +308,7 @@ function pickRep(hits){
 }
 function showExtract(t, d){
   const b = addRow('bot', '<div class="lead">' + esc(d[1]) + ' の「' + t.label + '」を取得中…</div>');
-  fetch(WORKER_URL + '/?yj=' + d[0] + '&sec=' + t.key)
+  fetch(WORKER_URL + '/?yj=' + d[0] + '&sec=' + t.key, {cache: 'no-store'})
     .then(r => r.json())
     .then(j => {
       if(j.ok){
