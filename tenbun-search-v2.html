@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>添文サーチ｜添付文書リンク検索</title>
+<title>テンブン｜添付文書検索</title>
 <style>
 :root{
   --bg:#FAF4EB;
@@ -143,7 +143,7 @@ footer{
 </head>
 <body>
 <header>
-  <h1>添文サーチ</h1>
+  <h1>テンブン</h1>
   <span class="count" id="count"></span>
 </header>
 
@@ -192,6 +192,7 @@ const TOPICS = [
   {key:'heiyokinki', label:'10.1 併用禁忌',   words:['併用禁忌']},
   {key:'heiyochui',  label:'10.2 併用注意',   words:['併用注意']},
   {key:'sogo',  label:'10. 相互作用',         words:['相互作用','併用','飲み合わせ','のみあわせ']},
+  {key:'judai', label:'11.1 重大な副作用',     words:['重大な副作用','副作用','ふくさよう']},
 ];
 function detectTopic(raw){
   for(const t of TOPICS){
@@ -311,7 +312,7 @@ function showHelp(){
     '<b>① 添付文書検索</b><br>薬品名か成分名を入力（例：カロナール／ロキソプロフェン）。ひらがな・一部だけでもOK。PMDAの添付文書ページへのリンクを返します。<br><br>' +
     '<b>② 記載事項を直接見る</b><br>薬品名＋下記の言葉で、該当セクションの本文をその場に表示します（例：カロナール 授乳）。語順は自由、成分名でも可。その場合は先発の錠剤など代表的な製品の添付文書から抽出します。</div>' +
     '<table style="font-size:14px;margin:8px 0;border-collapse:collapse">' + rows + '</table>' +
-    '<div style="font-size:15px;line-height:1.9"><b>③ 音声入力</b><br>マイクボタンを押して「ロキソニン 併用禁忌」のように話すと、自動で検索されます。</div>' +
+    '<div style="font-size:15px;line-height:1.9"><b>③ 2剤の併用チェック</b><br>薬を2つ並べて入力すると、両方の記載を並べて表示します（例：ワーファリン ロキソニン 併用）。<br><br><b>④ 音声入力</b><br>マイクボタンを押して「ロキソニン 併用禁忌」のように話すと、自動で検索されます。</div>' +
     '<div style="font-size:13px;color:var(--sub);margin-top:8px">表示される記載は参考用です。調剤判断の際は必ず「原文を開く」から原文を確認してください。</div>');
 }
 
@@ -329,6 +330,22 @@ function respond(raw){
     addRow('user', esc(raw));
     addRow('bot', '<div class="lead">薬品名も一緒に入力してください（例：カロナール 授乳）</div>');
     return;
+  }
+  if(topic){
+    const parts = qstr.trim().split(/[\s\u3000]+/).filter(Boolean);
+    if(parts.length >= 2){
+      const reps = [];
+      for(const p of parts.slice(0, 2)){
+        const h = search(p);
+        if(h.length) reps.push(DATA[pickRep(h)]);
+      }
+      if(reps.length === 2){
+        addRow('user', esc(raw));
+        showExtract(topic, reps[0]);
+        showExtract(topic, reps[1]);
+        return;
+      }
+    }
   }
   const hits = search(qstr);
   if(hits === null) return;
