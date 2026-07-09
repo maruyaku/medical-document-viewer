@@ -158,7 +158,7 @@ footer{
     <button id="send">検索</button>
   </div>
   <div class="note">
-    データ：薬価基準収載品目リスト（令和8年6月12日適用・約12,400品目）／リンク先はPMDA公式ページ（添付文書・IF・RMP）。添付文書等の著作権は各製造販売業者に帰属します。局方名等の統一名収載品は、リンク先で文書が表示されない場合があります。記載抽出は自局業務の参考用です。調剤判断の際は必ず原文を確認してください。
+    データ：薬価基準収載品目リスト（令和8年6月12日適用・約12,400品目）／リンク先はPMDA公式ページ（添付文書・IF・RMP）。添付文書等の著作権は各製造販売業者に帰属します。局方名等の統一名収載品（約1,600件）はPMDA側に文書がないため検索対象から除外しています。記載抽出は自局業務の参考用です。調剤判断の際は必ず原文を確認してください。
   </div>
 </footer>
 
@@ -222,7 +222,7 @@ function showExtract(t, d){
 const log = document.getElementById('log');
 const q = document.getElementById('q');
 const send = document.getElementById('send');
-document.getElementById('count').textContent = DATA.length.toLocaleString() + '品目収載';
+document.getElementById('count').textContent = DATA.filter(d => d[4]).length.toLocaleString() + '品目検索可能';
 
 function addRow(cls, html){
   const row = document.createElement('div');
@@ -256,6 +256,7 @@ function search(raw){
   if(!nq) return null;
   const exact = [], starts = [], incl = [], gen = [];
   for(let i = 0; i < IDX.length; i++){
+    if(!DATA[i][4]) continue; // 統一名収載品（PMDA未収載）は除外
     const [n, g] = IDX[i];
     if(n === nq) exact.push(i);
     else if(n.startsWith(nq)) starts.push(i);
@@ -268,6 +269,7 @@ function search(raw){
     const tokens = nq.match(/[A-Z0-9.]+|[^A-Z0-9.]+/g) || [];
     if(tokens.length > 1){
       for(let i = 0; i < IDX.length; i++){
+        if(!DATA[i][4]) continue; // 統一名収載品（PMDA未収載）は除外
         if(tokens.every(t => IDX[i][0].includes(t))) out.push(i);
       }
     }
