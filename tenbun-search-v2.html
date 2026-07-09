@@ -300,7 +300,27 @@ function search(raw){
   return out;
 }
 
+function showHelp(){
+  const rows = TOPICS.map(t =>
+    '<tr><td style="padding:3px 10px 3px 0;white-space:nowrap;font-weight:700;color:var(--accent-deep)">' + t.label + '</td>' +
+    '<td style="padding:3px 0">' + t.words.filter(w => !/^[ぁ-ん]+$/.test(w)).join('、') + '</td></tr>').join('');
+  addRow('bot',
+    '<div class="lead">使い方</div>' +
+    '<div style="font-size:15px;line-height:1.9">' +
+    '<b>① 薬を探す</b><br>薬品名か成分名を入力（例：カロナール／ロキソプロフェン）。ひらがな・一部だけでもOK。PMDAの添付文書ページへのリンクを返します。<br><br>' +
+    '<b>② 記載を直接読む</b><br>薬品名＋下記の言葉で、該当セクションの本文をその場に表示します（例：カロナール 授乳）。語順は自由、成分名でも可。その場合は先発の錠剤など代表的な製品の添付文書から抽出します。</div>' +
+    '<table style="font-size:14px;margin:8px 0;border-collapse:collapse">' + rows + '</table>' +
+    '<div style="font-size:15px;line-height:1.9"><b>③ 音声で聞く</b><br>マイクボタンを押して「ロキソニン 併用禁忌」のように話すと、自動で検索されます。</div>' +
+    '<div style="font-size:13px;color:var(--sub);margin-top:8px">表示される記載は参考用です。調剤判断の際は必ず「原文を開く」から原文を確認してください。</div>');
+}
+
 function respond(raw){
+  const cmd = raw.trim();
+  if(cmd === '説明' || cmd === '使い方' || cmd === 'ヘルプ' || cmd.toLowerCase() === 'help'){
+    addRow('user', esc(cmd));
+    showHelp();
+    return;
+  }
   const topic = detectTopic(raw);
   let qstr = raw;
   if(topic){ for(const w of topic.words){ qstr = qstr.split(w).join(' '); } }
@@ -390,7 +410,7 @@ q.addEventListener('keydown', e => {
 // 初期メッセージ
 const hello = addRow('bot',
   '<div class="lead">医薬品名を入力すると、PMDA公式の添付文書ページへのリンクを返します。</div>' +
-  '<div style="font-size:15px;color:var(--sub)">部分一致・ひらがな・成分名OK。「薬品名＋授乳／妊婦／小児／禁忌」等で該当記載を直接表示します。</div>' +
+  '<div style="font-size:15px;color:var(--sub)">部分一致・ひらがな・成分名OK。「薬品名＋授乳／禁忌」等で該当記載を直接表示。詳しくは「説明」と入力してください。</div>' +
   '<div class="chips">' +
   ['カロナール 授乳','ロキソプロフェン 妊婦','アムロジピン 禁忌','ムコダイン'].map(x =>
     '<button class="chip" data-x="' + x + '">' + x + '</button>').join('') +
