@@ -188,6 +188,8 @@ const TOPICS = [
   {key:'jin',   label:'9.2 腎機能障害患者',   words:['腎機能','腎障害','透析','じんきのう']},
   {key:'kan',   label:'9.3 肝機能障害患者',   words:['肝機能','肝障害','かんきのう']},
   {key:'kinki', label:'2. 禁忌',              words:['禁忌','きんき']},
+  {key:'heiyokinki', label:'10.1 併用禁忌',   words:['併用禁忌']},
+  {key:'heiyochui',  label:'10.2 併用注意',   words:['併用注意']},
   {key:'sogo',  label:'10. 相互作用',         words:['相互作用','併用','飲み合わせ','のみあわせ']},
 ];
 function detectTopic(raw){
@@ -209,13 +211,14 @@ function showExtract(t, d){
           '<div class="exsrc"><a href="' + esc(j.source) + '" target="_blank" rel="noopener">原文を開く（PMDA）</a>　' + esc(j.note || '') + '</div>';
       }else{
         b.innerHTML = '<div class="lead">' + t.label + ' の抽出はできませんでした</div>' +
-          '<div style="font-size:14px;color:var(--sub)">' + esc(j.error || '') + '</div>' +
-          (j.fallback ? '<div class="exsrc" style="margin-top:6px"><a href="' + esc(j.fallback) + '" target="_blank" rel="noopener">PMDAページで直接確認する</a></div>' : '');
+          '<div style="font-size:14px;color:var(--sub);margin-bottom:8px">' + esc(j.error || '') + '</div>' +
+          cardHTML(d);
       }
       log.scrollTop = log.scrollHeight;
     })
     .catch(() => {
-      b.innerHTML = '<div class="lead">通信エラー：抽出サーバーに接続できませんでした</div>';
+      b.innerHTML = '<div class="lead">通信エラー：抽出サーバーに接続できませんでした</div>' + cardHTML(d);
+      log.scrollTop = log.scrollHeight;
     });
 }
 
@@ -297,7 +300,7 @@ function respond(raw){
       '・成分名（一般名）でも検索できます</div>');
     return;
   }
-  if(topic){ showExtract(topic, DATA[hits[0]]); }
+  if(topic){ showExtract(topic, DATA[hits[0]]); return; }
   const SHOW = 30, MAX = 200;
   const shown = hits.slice(0, SHOW);
   const lead = hits.length + '件見つかりました' + (hits.length > SHOW ? '（先頭' + SHOW + '件を表示）' : '') + '：';
