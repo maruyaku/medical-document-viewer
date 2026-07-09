@@ -188,6 +188,7 @@ const TOPICS = [
   {key:'jin',   label:'9.2 腎機能障害患者',   words:['腎機能','腎障害','透析','じんきのう']},
   {key:'kan',   label:'9.3 肝機能障害患者',   words:['肝機能','肝障害','かんきのう']},
   {key:'kinki', label:'2. 禁忌',              words:['禁忌','きんき']},
+  {key:'yoho',  label:'6. 用法及び用量',      words:['用法用量','用法','用量','ようほう']},
   {key:'heiyokinki', label:'10.1 併用禁忌',   words:['併用禁忌']},
   {key:'heiyochui',  label:'10.2 併用注意',   words:['併用注意']},
   {key:'sogo',  label:'10. 相互作用',         words:['相互作用','併用','飲み合わせ','のみあわせ']},
@@ -307,10 +308,10 @@ function showHelp(){
   addRow('bot',
     '<div class="lead">使い方</div>' +
     '<div style="font-size:15px;line-height:1.9">' +
-    '<b>① 薬を探す</b><br>薬品名か成分名を入力（例：カロナール／ロキソプロフェン）。ひらがな・一部だけでもOK。PMDAの添付文書ページへのリンクを返します。<br><br>' +
-    '<b>② 記載を直接読む</b><br>薬品名＋下記の言葉で、該当セクションの本文をその場に表示します（例：カロナール 授乳）。語順は自由、成分名でも可。その場合は先発の錠剤など代表的な製品の添付文書から抽出します。</div>' +
+    '<b>① 添付文書検索</b><br>薬品名か成分名を入力（例：カロナール／ロキソプロフェン）。ひらがな・一部だけでもOK。PMDAの添付文書ページへのリンクを返します。<br><br>' +
+    '<b>② 記載事項を直接見る</b><br>薬品名＋下記の言葉で、該当セクションの本文をその場に表示します（例：カロナール 授乳）。語順は自由、成分名でも可。その場合は先発の錠剤など代表的な製品の添付文書から抽出します。</div>' +
     '<table style="font-size:14px;margin:8px 0;border-collapse:collapse">' + rows + '</table>' +
-    '<div style="font-size:15px;line-height:1.9"><b>③ 音声で聞く</b><br>マイクボタンを押して「ロキソニン 併用禁忌」のように話すと、自動で検索されます。</div>' +
+    '<div style="font-size:15px;line-height:1.9"><b>③ 音声入力</b><br>マイクボタンを押して「ロキソニン 併用禁忌」のように話すと、自動で検索されます。</div>' +
     '<div style="font-size:13px;color:var(--sub);margin-top:8px">表示される記載は参考用です。調剤判断の際は必ず「原文を開く」から原文を確認してください。</div>');
 }
 
