@@ -200,16 +200,22 @@ function detectTopic(raw){
   }
   return null;
 }
-// セクション抽出の対象は剤形の優先順位で代表品を選ぶ（錠 > カプセル > 細粒 > …）
+// セクション抽出の代表品選択:
+// 同一成分の中で ①先発系（品名に「屋号」なし）優先 → ②剤形優先 → ③検索ランク順
 function pickRep(hits){
   const FORM = ['錠','カプセル','細粒','顆粒','ドライシロップ','シロップ','内用液'];
-  let best = hits[0], bestScore = 99;
-  for(const i of hits.slice(0, 15)){
-    const name = DATA[i][1];
-    let s = FORM.length;
-    for(let f = 0; f < FORM.length; f++){
-      if(name.includes(FORM[f])){ s = f; break; }
+  const baseGen = DATA[hits[0]][2]; // 先頭ヒットの成分名を基準に同一成分へ限定
+  let best = hits[0], bestScore = 999, scanned = 0;
+  for(const i of hits){
+    if(scanned++ > 300) break;
+    const d = DATA[i];
+    if(baseGen && d[2] !== baseGen) continue;
+    let f = FORM.length;
+    for(let k = 0; k < FORM.length; k++){
+      if(d[1].includes(FORM[k])){ f = k; break; }
     }
+    const kohatsu = d[1].includes('「') ? 1 : 0; // 「屋号」付き＝後発品
+    const s = kohatsu * 10 + f;
     if(s < bestScore){ bestScore = s; best = i; }
   }
   return best;
