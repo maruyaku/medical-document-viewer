@@ -200,6 +200,20 @@ function detectTopic(raw){
   }
   return null;
 }
+// セクション抽出の対象は剤形の優先順位で代表品を選ぶ（錠 > カプセル > 細粒 > …）
+function pickRep(hits){
+  const FORM = ['錠','カプセル','細粒','顆粒','ドライシロップ','シロップ','内用液'];
+  let best = hits[0], bestScore = 99;
+  for(const i of hits.slice(0, 15)){
+    const name = DATA[i][1];
+    let s = FORM.length;
+    for(let f = 0; f < FORM.length; f++){
+      if(name.includes(FORM[f])){ s = f; break; }
+    }
+    if(s < bestScore){ bestScore = s; best = i; }
+  }
+  return best;
+}
 function showExtract(t, d){
   const b = addRow('bot', '<div class="lead">' + esc(d[1]) + ' の「' + t.label + '」を取得中…</div>');
   fetch(WORKER_URL + '/?yj=' + d[0] + '&sec=' + t.key)
@@ -300,7 +314,7 @@ function respond(raw){
       '・成分名（一般名）でも検索できます</div>');
     return;
   }
-  if(topic){ showExtract(topic, DATA[hits[0]]); return; }
+  if(topic){ showExtract(topic, DATA[pickRep(hits)]); return; }
   const SHOW = 30, MAX = 200;
   const shown = hits.slice(0, SHOW);
   const lead = hits.length + '件見つかりました' + (hits.length > SHOW ? '（先頭' + SHOW + '件を表示）' : '') + '：';
