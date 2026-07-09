@@ -49,7 +49,7 @@ header h1 span:nth-child(1){color:#D9482A;transform:rotate(-7deg) translateY(1px
 header h1 span:nth-child(2){color:#F08519;transform:rotate(5deg) translateY(-2px)}
 header h1 span:nth-child(3){color:#D9482A;transform:rotate(-4deg) translateY(2px)}
 header h1 span:nth-child(4){color:#F08519;transform:rotate(7deg) translateY(-1px)}
-header .count{font-size:13px;color:var(--sub)}
+header .count{font-size:13px;color:#333333}
 #log{
   flex:1;overflow-y:auto;padding:18px 14px 10px;
   -webkit-overflow-scrolling:touch;
@@ -312,9 +312,10 @@ function showExtract(t, d){
     .then(r => r.json())
     .then(j => {
       if(j.ok){
+        const pmdaUrl = 'https://www.pmda.go.jp/PmdaSearch/rdSearch/02/' + d[0] + '?user=1';
         b.innerHTML = '<div class="lead">' + t.label + '｜' + esc(d[1]) + '</div>' +
           '<div class="exq">' + esc(j.text).replace(/\n/g,'<br>') + '</div>' +
-          '<div class="exsrc"><a href="' + esc(j.source) + '" target="_blank" rel="noopener">原文を開く（PMDA）</a>　' + esc(j.note || '') + '</div>';
+          '<div class="exsrc"><a href="' + pmdaUrl + '" target="_blank" rel="noopener">原文を開く（PMDA）</a>　' + esc(j.note || '') + '</div>';
       }else{
         b.innerHTML = '<div class="lead">' + t.label + ' の抽出はできませんでした</div>' +
           '<div style="font-size:14px;color:var(--sub);margin-bottom:8px">' + esc(j.error || '') + '</div>' +
@@ -527,7 +528,7 @@ q.addEventListener('keydown', e => {
 // 初期メッセージ
 const hello = addRow('bot',
   '<div class="lead">医薬品名を入力すると、PMDA公式の添付文書ページへのリンクを返します。</div>' +
-  '<div style="font-size:15px;color:var(--sub)">部分一致・ひらがな・成分名OK。「薬品名＋授乳／禁忌」等で該当記載を直接表示。詳しくは「説明」と入力してください。</div>' +
+  '<div style="font-size:15px;color:#333333">部分一致・ひらがな・成分名OK。「薬品名＋授乳／禁忌」等で該当記載を直接表示。<br>詳しくは「説明」と入力してください。</div>' +
   '<div class="chips">' +
   ['カロナール 授乳','ロキソプロフェン 妊婦','アムロジピン 禁忌','ムコダイン'].map(x =>
     '<button class="chip" data-x="' + x + '">' + x + '</button>').join('') +
