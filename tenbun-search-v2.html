@@ -50,6 +50,12 @@ header h1 span:nth-child(2){color:#F08519;transform:rotate(5deg) translateY(-2px
 header h1 span:nth-child(3){color:#D9482A;transform:rotate(-4deg) translateY(2px)}
 header h1 span:nth-child(4){color:#F08519;transform:rotate(7deg) translateY(-1px)}
 header .count{font-size:13px;color:#333333}
+#reset{
+  margin-left:auto;font-size:13px;font-weight:700;font-family:inherit;
+  color:var(--accent-deep);background:var(--accent-soft);
+  border:none;border-radius:99px;padding:7px 14px;cursor:pointer;flex-shrink:0;
+}
+#reset:active{opacity:.7}
 #log{
   flex:1;overflow-y:auto;padding:18px 14px 10px;
   -webkit-overflow-scrolling:touch;
@@ -190,6 +196,7 @@ footer{
   </svg>
   <h1 aria-label="テンブン"><span>テ</span><span>ン</span><span>ブ</span><span>ン</span></h1>
   <span class="count" id="count"></span>
+  <button id="reset" aria-label="チャットをリセット">リセット</button>
 </header>
 
 <div id="log" aria-live="polite"></div>
@@ -547,16 +554,25 @@ q.addEventListener('keydown', e => {
   }
 });
 
-// 初期メッセージ
-const hello = addRow('bot',
-  '<div class="lead">医薬品名を入力すると、PMDA公式の添付文書ページへのリンクを返します。</div>' +
-  '<div style="font-size:15px;color:#333333">部分一致・ひらがな・成分名OK。「薬品名＋授乳／禁忌」等で該当記載を直接表示。<br>詳しくは「説明」と入力してください。</div>' +
-  '<div class="chips">' +
-  ['カロナール 授乳','ロキソプロフェン 妊婦','アムロジピン 禁忌','ムコダイン'].map(x =>
-    '<button class="chip" data-x="' + x + '">' + x + '</button>').join('') +
-  '</div>');
-hello.querySelectorAll('.chip').forEach(c =>
-  c.addEventListener('click', () => respond(c.dataset.x)));
+// 初期メッセージ（リセット時にも再表示）
+function showGreeting(){
+  log.innerHTML = '';
+  const hello = addRow('bot',
+    '<div class="lead">医薬品名を入力すると、PMDA公式の添付文書ページへのリンクを表示します。</div>' +
+    '<div style="font-size:15px;color:#333333">部分一致・ひらがな・成分名OK。「薬品名＋授乳／禁忌」等で該当記載を直接表示。<br>詳しくは「説明」と入力してください。</div>' +
+    '<div class="chips">' +
+    ['カロナール 授乳','ロキソプロフェン 妊婦','アムロジピン 禁忌','ムコダイン'].map(x =>
+      '<button class="chip" data-x="' + x + '">' + x + '</button>').join('') +
+    '</div>');
+  hello.querySelectorAll('.chip').forEach(c =>
+    c.addEventListener('click', () => respond(c.dataset.x)));
+}
+showGreeting();
+document.getElementById('reset').addEventListener('click', () => {
+  showGreeting();
+  q.value = '';
+  q.focus();
+});
 q.focus();
 
 // ---- 利用規約モーダル ----
