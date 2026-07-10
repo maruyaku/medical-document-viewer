@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@700;900&display=swap" rel="stylesheet">
 <title>テンブン｜添付文書検索</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -40,7 +43,7 @@ header{
   display:flex;align-items:center;gap:12px;flex-shrink:0;flex-wrap:wrap;
 }
 header h1{
-  font-family:"Hiragino Maru Gothic ProN","HGMaruGothicMPRO","Yu Gothic UI",sans-serif;
+  font-family:"Zen Maru Gothic","Hiragino Maru Gothic ProN","HGMaruGothicMPRO","Yu Gothic UI",sans-serif;
   font-size:33px;font-weight:900;letter-spacing:.02em;
   display:flex;align-items:baseline;
 }
@@ -62,19 +65,33 @@ header .count{font-size:13px;color:#333333}
 }
 .row{display:flex;margin-bottom:14px}
 .row.user{justify-content:flex-end}
+.row.bot{align-items:flex-end}
+.avatar{width:34px;height:38px;flex-shrink:0;margin:0 8px 2px 0}
+.avatar svg{width:100%;height:100%}
 .bubble{
   max-width:86%;padding:13px 17px;border-radius:var(--radius);
   background:var(--surface);border:1px solid var(--line);
   box-shadow:0 1px 3px rgba(120,85,60,.06);
 }
 .row.user .bubble{background:var(--user-bubble);border-color:transparent}
-.bubble .lead{font-size:16.5px;font-weight:600;color:var(--accent-deep);margin-bottom:10px}
+.bubble .lead{font-size:16.5px;font-weight:700;color:var(--accent-deep);margin-bottom:10px;font-family:"Zen Maru Gothic","Hiragino Maru Gothic ProN",sans-serif}
 .card{
   border:1px solid var(--line);border-radius:12px;padding:12px 14px;
   margin-bottom:10px;background:#FFFDFA;
   border-left:5px solid var(--accent);
 }
 .card:last-child{margin-bottom:0}
+.card{transition:transform .15s ease,box-shadow .15s ease}
+@media (hover:hover){
+  .card:hover{transform:translateY(-2px);box-shadow:0 5px 14px rgba(120,60,40,.13)}
+  .chip:hover{transform:translateY(-1px)}
+  .card a.open:hover{filter:brightness(1.06)}
+}
+.chip{transition:transform .12s ease,background .12s ease}
+.card a.open{transition:transform .1s ease,filter .12s ease}
+.card a.open:active{transform:translateY(1px)}
+#send{transition:transform .1s ease}
+#send:active{transform:translateY(1px)}
 .card.naiyo{border-left-color:var(--naiyo)}
 .card.chusha{border-left-color:var(--chusha)}
 .card.gaiyo{border-left-color:var(--gaiyo)}
@@ -152,7 +169,8 @@ footer{
   max-height:86vh;display:flex;flex-direction:column;overflow:hidden;
   box-shadow:0 12px 40px rgba(120,60,40,.25)}
 .tos-head{padding:16px 20px;background:linear-gradient(180deg,#FFFDF9,#FBF3E9);
-  border-bottom:1px solid var(--line);font-size:18px;font-weight:800;color:var(--accent-deep)}
+  border-bottom:1px solid var(--line);font-size:18px;font-weight:800;color:var(--accent-deep);
+  font-family:"Zen Maru Gothic","Hiragino Maru Gothic ProN",sans-serif}
 .tos-body{padding:16px 20px;overflow-y:auto;font-size:14.5px;line-height:1.8}
 .tos-body h3{font-size:15px;color:var(--accent-deep);margin:14px 0 4px}
 .tos-body h3:first-child{margin-top:0}
@@ -172,6 +190,10 @@ footer{
 @media (prefers-reduced-motion:no-preference){
   .row{animation:pop .18s ease-out}
   @keyframes pop{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  .row.thinking .avatar{animation:hop .7s ease-in-out infinite}
+  @keyframes hop{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+  .exq{animation:fadein .35s ease}
+  @keyframes fadein{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
 }
 </style>
 </head>
@@ -337,9 +359,12 @@ function pickRep(hits){
 }
 function showExtract(t, d){
   const b = addRow('bot', '<div class="lead">' + esc(d[1]) + ' の「' + t.label + '」を取得中…</div>');
+  const row = b.parentNode;
+  row.classList.add('thinking');
   fetch(WORKER_URL + '/?yj=' + d[0] + '&sec=' + t.key, {cache: 'no-store'})
     .then(r => r.json())
     .then(j => {
+      row.classList.remove('thinking');
       if(j.ok){
         const pmdaUrl = 'https://www.pmda.go.jp/PmdaSearch/rdSearch/02/' + d[0] + '?user=1';
         b.innerHTML = '<div class="lead">' + t.label + '｜' + esc(d[1]) + '</div>' +
@@ -353,6 +378,7 @@ function showExtract(t, d){
       log.scrollTop = log.scrollHeight;
     })
     .catch(() => {
+      row.classList.remove('thinking');
       b.innerHTML = '<div class="lead">通信エラー：抽出サーバーに接続できませんでした</div>' + cardHTML(d);
       log.scrollTop = log.scrollHeight;
     });
@@ -363,9 +389,16 @@ const q = document.getElementById('q');
 const send = document.getElementById('send');
 document.getElementById('count').textContent = '添付文書検索サイト（' + DATA.filter(d => d[4]).length.toLocaleString() + '品目検索可能）';
 
+const AVATAR_SVG = '<svg viewBox="0 0 100 112" aria-hidden="true"><ellipse cx="50" cy="96" rx="36" ry="24" fill="#EDE6E2"/><ellipse cx="50" cy="103" rx="26" ry="16" fill="#FFFFFF"/><circle cx="50" cy="46" r="40" fill="#A3868F"/><ellipse cx="29" cy="57" rx="15" ry="13" fill="#FFFFFF"/><ellipse cx="71" cy="57" rx="15" ry="13" fill="#FFFFFF"/><circle cx="34" cy="39" r="8" fill="#F2828E"/><circle cx="34" cy="39" r="5.5" fill="#3E3238"/><circle cx="36" cy="37" r="2" fill="#FFFFFF"/><circle cx="66" cy="39" r="8" fill="#F2828E"/><circle cx="66" cy="39" r="5.5" fill="#3E3238"/><circle cx="68" cy="37" r="2" fill="#FFFFFF"/><path d="M50 46 Q36 49 38.5 60 Q44 69 50 70 Q56 69 61.5 60 Q64 49 50 46 Z" fill="#F2828E"/><path d="M41 62 Q50 68 59 62 Q56 69 50 70 Q44 69 41 62 Z" fill="#FBBFC6"/><circle cx="26" cy="66" r="5" fill="#F9C0CA"/><circle cx="74" cy="66" r="5" fill="#F9C0CA"/></svg>';
 function addRow(cls, html){
   const row = document.createElement('div');
   row.className = 'row ' + cls;
+  if(cls === 'bot'){
+    const av = document.createElement('div');
+    av.className = 'avatar';
+    av.innerHTML = AVATAR_SVG;
+    row.appendChild(av);
+  }
   const b = document.createElement('div');
   b.className = 'bubble';
   b.innerHTML = html;
