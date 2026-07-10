@@ -55,8 +55,9 @@ header h1 span:nth-child(4){color:#F08519;transform:rotate(7deg) translateY(-1px
 header .count{font-size:13px;color:#333333}
 #reset{
   margin-left:auto;font-size:13px;font-weight:700;font-family:inherit;
-  color:var(--accent-deep);background:var(--accent-soft);
+  color:#fff;background:var(--accent);
   border:none;border-radius:99px;padding:7px 14px;cursor:pointer;flex-shrink:0;
+  box-shadow:0 2px 4px rgba(158,64,40,.2);
 }
 #reset:active{opacity:.7}
 #log{
@@ -428,16 +429,15 @@ function cardHTML(d){
 function search(raw){
   const nq = norm(kanaFix(raw.trim()));
   if(!nq) return null;
-  const exact = [], starts = [], incl = [], gen = [];
+  const exact = [], starts = [], incl = [];
   for(let i = 0; i < IDX.length; i++){
     if(!DATA[i][4]) continue; // 統一名収載品（PMDA未収載）は除外
     const [n, g] = IDX[i];
     if(n === nq) exact.push(i);
     else if(n.startsWith(nq)) starts.push(i);
     else if(n.includes(nq)) incl.push(i);
-    else if(g.includes(nq)) gen.push(i);
   }
-  let out = [...exact, ...starts, ...incl, ...gen];
+  let out = [...exact, ...starts, ...incl];
   if(out.length === 0){
     // フォールバック：「タケキャブ10」→「タケキャブ」+「10」のAND部分一致
     const tokens = nq.match(/[A-Z0-9.]+|[^A-Z0-9.]+/g) || [];
@@ -458,8 +458,8 @@ function showHelp(){
   addRow('bot',
     '<div class="lead">使い方</div>' +
     '<div style="font-size:15px;line-height:1.9">' +
-    '<b>① 添付文書検索</b><br>薬品名か成分名を入力（例：カロナール／ロキソプロフェン）。ひらがな・一部だけでもOK。PMDAの添付文書ページへのリンクを返します。<br><br>' +
-    '<b>② 記載事項を直接見る</b><br>薬品名＋下記の言葉で、該当セクションの本文をその場に表示します（例：カロナール 授乳）。語順は自由、成分名でも可。その場合は先発の錠剤など代表的な製品の添付文書から抽出します。</div>' +
+    '<b>① 添付文書検索</b><br>薬品名を入力（例：カロナール）。ひらがな・一部だけでもOK。PMDAの添付文書ページへのリンクを返します。<br><br>' +
+    '<b>② 記載事項を直接見る</b><br>薬品名＋下記の言葉で、該当セクションの本文をその場に表示します（例：カロナール 授乳）。語順は自由。該当製品が複数ある場合は、先発の錠剤など代表的な製品の添付文書から抽出します。</div>' +
     '<table style="font-size:14px;margin:8px 0;border-collapse:collapse">' + rows + '</table>' +
     '<div style="font-size:15px;line-height:1.9"><b>③ 2剤の併用チェック</b><br>薬を2つ並べて入力すると、両方の記載を並べて表示します（例：ワーファリン ロキソニン 併用）。<br><br><b>④ 音声入力</b><br>マイクボタンを押して「ロキソニン 併用禁忌」のように話すと、自動で検索されます。</div>' +
     '<div style="font-size:13px;color:var(--sub);margin-top:8px">表示される記載は参考用です。調剤判断の際は必ず「原文を開く」から原文を確認してください。</div>');
@@ -504,7 +504,7 @@ function respond(raw){
       '<div class="lead">「' + esc(raw) + '」は見つかりませんでした。</div>' +
       '<div style="font-size:15px">・2文字以上で、名称の一部だけでも検索できます<br>' +
       '・ひらがな／カタカナはどちらでも可<br>' +
-      '・成分名（一般名）でも検索できます<br>' +
+      '' +
       '・音声で漢字に変換された場合は、カタカナで打ち直してみてください</div>');
     return;
   }
@@ -594,9 +594,9 @@ function showGreeting(){
   log.innerHTML = '';
   const hello = addRow('bot',
     '<div class="lead">医薬品名を入力すると、PMDA公式の添付文書ページへのリンクを表示します。</div>' +
-    '<div style="font-size:15px;color:#333333">部分一致・ひらがな・成分名OK。「薬品名＋授乳／禁忌」等で該当記載を直接表示。<br>詳しくは「説明」と入力してください。</div>' +
+    '<div style="font-size:15px;color:#333333">部分一致・ひらがなOK。「薬品名＋授乳／禁忌」等で該当記載を直接表示。<br>詳しくは「説明」と入力してください。</div>' +
     '<div class="chips">' +
-    ['カロナール 授乳','ロキソプロフェン 妊婦','アムロジピン 禁忌','ムコダイン'].map(x =>
+    ['ムコダイン','クレストール 2.5','ロキソプロフェン 授乳','クラリス 併用禁忌'].map(x =>
       '<button class="chip" data-x="' + x + '">' + x + '</button>').join('') +
     '</div>');
   hello.querySelectorAll('.chip').forEach(c =>
