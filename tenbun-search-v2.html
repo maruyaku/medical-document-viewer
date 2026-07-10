@@ -60,6 +60,11 @@ header .count{font-size:13px;color:#333333}
   box-shadow:0 2px 4px rgba(158,64,40,.2);
 }
 #reset:active{opacity:.7}
+@media (max-width:560px){
+  /* スマホ：リセットは1行目（ロゴの右端）に残し、サブタイトルだけ2行目へ */
+  header{row-gap:2px}
+  header .count{order:9;width:100%}
+}
 #log{
   flex:1;overflow-y:auto;padding:18px 14px 10px;
   -webkit-overflow-scrolling:touch;
