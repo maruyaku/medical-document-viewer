@@ -333,12 +333,14 @@ const TOPICS = [
   {key:'judai', label:'11.1 重大な副作用',     words:['重大な副作用','副作用','ふくさよう']},
 ];
 function detectTopic(raw){
+  // 最長一致：「併用禁忌」が「禁忌」より優先されるように、マッチした語が最も長いトピックを採用
+  let best = null, bestLen = 0;
   for(const t of TOPICS){
     for(const w of t.words){
-      if(raw.includes(w)) return t;
+      if(raw.includes(w) && w.length > bestLen){ best = t; bestLen = w.length; }
     }
   }
-  return null;
+  return best;
 }
 // セクション抽出の代表品選択:
 // 同一成分の中で ①先発系（品名に「屋号」なし）優先 → ②剤形優先 → ③検索ランク順
