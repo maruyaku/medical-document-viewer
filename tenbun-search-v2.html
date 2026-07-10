@@ -358,7 +358,16 @@ function detectTopic(raw){
 function pickRep(hits){
   const FORM = ['錠','カプセル','細粒','顆粒','ドライシロップ','シロップ','内用液'];
   const baseGen = DATA[hits[0]][2]; // 先頭ヒットの成分名を基準に同一成分へ限定
-  let best = hits[0], bestScore = 999, scanned = 0;
+  // 品名から規格を取り出す。同順位なら規格が大きい方（成人用規格）を優先
+  function strengthOf(name){
+    const n = norm(name);
+    let m = n.match(/([0-9]+(?:\.[0-9]+)?)MG/);
+    if(m) return parseFloat(m[1]);
+    // mg表記がない品名（例：クラリス錠200）は単独の数字を規格とみなす。％・mL等の数字は除外
+    m = n.match(/([0-9]+(?:\.[0-9]+)?)(?![0-9.%A-Z])/);
+    return m ? parseFloat(m[1]) : 0;
+  }
+  let best = hits[0], bestScore = 999, bestStr = -1, scanned = 0;
   for(const i of hits){
     if(scanned++ > 300) break;
     const d = DATA[i];
@@ -369,7 +378,10 @@ function pickRep(hits){
     }
     const kohatsu = d[1].includes('「') ? 1 : 0; // 「屋号」付き＝後発品
     const s = kohatsu * 10 + f;
-    if(s < bestScore){ bestScore = s; best = i; }
+    const st = strengthOf(d[1]);
+    if(s < bestScore || (s === bestScore && st > bestStr)){
+      bestScore = s; bestStr = st; best = i;
+    }
   }
   return best;
 }
@@ -391,12 +403,10 @@ function showExtract(t, d){
           '<div style="font-size:14px;color:var(--sub);margin-bottom:8px">' + esc(j.error || '') + '</div>' +
           cardHTML(d);
       }
-      log.scrollTop = log.scrollHeight;
     })
     .catch(() => {
       row.classList.remove('thinking');
       b.innerHTML = '<div class="lead">通信エラー：抽出サーバーに接続できませんでした</div>' + cardHTML(d);
-      log.scrollTop = log.scrollHeight;
     });
 }
 
@@ -404,6 +414,12 @@ const log = document.getElementById('log');
 const q = document.getElementById('q');
 const send = document.getElementById('send');
 document.getElementById('count').textContent = '添付文書検索サイト（' + DATA.filter(d => d[4]).length.toLocaleString() + '品目検索可能）';
+
+let lastUserRow = null; // 直近のユーザー発言行（回答表示時のスクロール基準）
+function scrollToRowTop(rowEl){
+  // rowElの上端がチャット欄の上端に来るようにスクロール
+  log.scrollTop += rowEl.getBoundingClientRect().top - log.getBoundingClientRect().top - 6;
+}
 
 const AVATAR_SVG = '<svg viewBox="0 0 100 112" aria-hidden="true"><ellipse cx="50" cy="96" rx="36" ry="24" fill="#EDE6E2"/><ellipse cx="50" cy="103" rx="26" ry="16" fill="#FFFFFF"/><circle cx="50" cy="46" r="40" fill="#A3868F"/><ellipse cx="29" cy="57" rx="15" ry="13" fill="#FFFFFF"/><ellipse cx="71" cy="57" rx="15" ry="13" fill="#FFFFFF"/><circle cx="34" cy="39" r="8" fill="#F2828E"/><circle cx="34" cy="39" r="5.5" fill="#3E3238"/><circle cx="36" cy="37" r="2" fill="#FFFFFF"/><circle cx="66" cy="39" r="8" fill="#F2828E"/><circle cx="66" cy="39" r="5.5" fill="#3E3238"/><circle cx="68" cy="37" r="2" fill="#FFFFFF"/><path d="M50 46 Q36 49 38.5 60 Q44 69 50 70 Q56 69 61.5 60 Q64 49 50 46 Z" fill="#F2828E"/><path d="M41 62 Q50 68 59 62 Q56 69 50 70 Q44 69 41 62 Z" fill="#FBBFC6"/><circle cx="26" cy="66" r="5" fill="#F9C0CA"/><circle cx="74" cy="66" r="5" fill="#F9C0CA"/></svg>';
 function addRow(cls, html){
@@ -420,7 +436,14 @@ function addRow(cls, html){
   b.innerHTML = html;
   row.appendChild(b);
   log.appendChild(row);
-  log.scrollTop = log.scrollHeight;
+  if(cls === 'user'){
+    lastUserRow = row;
+    log.scrollTop = log.scrollHeight;
+  }else if(lastUserRow){
+    scrollToRowTop(lastUserRow); // 回答は「直前の質問」が画面上端に来る位置で表示
+  }else{
+    log.scrollTop = log.scrollHeight;
+  }
   return b;
 }
 
@@ -533,7 +556,6 @@ function respond(raw){
     btn.onclick = () => {
       btn.outerHTML = hits.slice(SHOW, MAX).map(i => cardHTML(DATA[i])).join('') +
         (hits.length > MAX ? '<div class="lead">' + (hits.length - MAX) + '件省略。名称を追加して絞り込んでください。</div>' : '');
-      log.scrollTop = log.scrollHeight;
     };
     b.appendChild(btn);
   }
@@ -617,6 +639,7 @@ function showGreeting(){
 }
 showGreeting();
 document.getElementById('reset').addEventListener('click', () => {
+  lastUserRow = null;
   showGreeting();
   q.value = '';
   q.focus();
