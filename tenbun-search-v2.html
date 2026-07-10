@@ -163,6 +163,9 @@ footer{
 @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(194,84,59,.35)}50%{box-shadow:0 0 0 8px rgba(194,84,59,0)}}
 .note{font-size:11.5px;color:var(--sub);margin-top:9px;line-height:1.6}
 .note a{color:var(--accent);font-weight:700}
+#noteFold{margin-top:8px}
+#noteFold summary{font-size:11.5px;color:var(--sub);cursor:pointer;-webkit-user-select:none;user-select:none}
+#noteFold .note{margin-top:5px}
 #tos{position:fixed;inset:0;background:rgba(64,51,43,.45);display:none;
   align-items:center;justify-content:center;z-index:50;padding:16px}
 #tos.show{display:flex}
@@ -234,9 +237,12 @@ footer{
     </button>
     <button id="send">検索</button>
   </div>
-  <div class="note">
-    データ：薬価基準収載品目リスト（令和8年6月12日適用・約12,400品目）／リンク先はPMDA公式ページ（添付文書・IF・RMP）。添付文書等の著作権は各製造販売業者に帰属します。局方名等の統一名収載品（約1,600件）はPMDA側に文書がないため検索対象から除外しています。記載抽出は自局業務の参考用です。調剤判断の際は必ず原文を確認してください。<a href="#" id="termsLink">利用規約・免責事項</a>　<span style="opacity:.7">v2.6（2026-07-09）</span>
-  </div>
+  <details id="noteFold">
+    <summary>データ出典・利用規約　<span style="opacity:.7">v2.6（2026-07-09）</span></summary>
+    <div class="note">
+      データ：薬価基準収載品目リスト（令和8年6月12日適用・約12,400品目）／リンク先はPMDA公式ページ（添付文書・IF・RMP）。添付文書等の著作権は各製造販売業者に帰属します。局方名等の統一名収載品（約1,600件）はPMDA側に文書がないため検索対象から除外しています。記載抽出は自局業務の参考用です。調剤判断の際は必ず原文を確認してください。<a href="#" id="termsLink">利用規約・免責事項</a>
+    </div>
+  </details>
 </footer>
 
 <div id="tos" role="dialog" aria-modal="true" aria-labelledby="tosTitle">
