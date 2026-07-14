@@ -478,8 +478,11 @@ function search(raw){
   }
   let out = [...exact, ...starts, ...incl];
   if(out.length === 0){
-    // フォールバック：「タケキャブ10」→「タケキャブ」+「10」のAND部分一致
-    const tokens = nq.match(/[A-Z0-9.]+|[^A-Z0-9.]+/g) || [];
+    // フォールバック：AND部分一致検索
+    // ①入力の空白区切りで分割（例:「アズレン ツルハラ」→「アズレン」+「ツルハラ」）
+    let tokens = raw.trim().split(/[\s　]+/).map(t => norm(kanaFix(t))).filter(Boolean);
+    // ②空白がない場合も英数字とカナ等の境界で分割（例:「タケキャブ10」→「タケキャブ」+「10」）
+    tokens = tokens.flatMap(t => t.match(/[A-Z0-9.]+|[^A-Z0-9.]+/g) || []);
     if(tokens.length > 1){
       for(let i = 0; i < IDX.length; i++){
         if(!DATA[i][4]) continue; // 統一名収載品（PMDA未収載）は除外
